@@ -88,7 +88,7 @@ func Encrypt(rawData, key []byte) (string, error) {
 	return base64.StdEncoding.EncodeToString(data), nil
 }
 
-func Dncrypt(rawData string, key []byte) (string, error) {
+func Decrypt(rawData string, key []byte) (string, error) {
 	data, err := base64.StdEncoding.DecodeString(rawData)
 	if err != nil {
 		return "", err
@@ -98,4 +98,30 @@ func Dncrypt(rawData string, key []byte) (string, error) {
 		return "", err
 	}
 	return string(dnData), nil
+}
+
+
+func EcbDecrypt(data, key []byte) []byte {
+	block, _ := aes.NewCipher(key)
+	decrypted := make([]byte, len(data))
+	size := block.BlockSize()
+
+	for bs, be := 0, size; bs < len(data); bs, be = bs+size, be+size {
+		block.Decrypt(decrypted[bs:be], data[bs:be])
+	}
+
+	return PKCS7UnPadding(decrypted)
+}
+
+func EcbEncrypt(data, key []byte) []byte {
+	block, _ := aes.NewCipher(key)
+	data = PKCS7Padding(data, block.BlockSize())
+	decrypted := make([]byte, len(data))
+	size := block.BlockSize()
+
+	for bs, be := 0, size; bs < len(data); bs, be = bs+size, be+size {
+		block.Encrypt(decrypted[bs:be], data[bs:be])
+	}
+
+	return decrypted
 }
