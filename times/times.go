@@ -46,14 +46,32 @@ func NowWeekday() string {
 
 //day
 
-//Get the timestamp of the midnight ， pay attention to the time zone
+//Get the timestamp of the midnight in cn
 //查询当天零点时间戳，注意时区,减去八个小时
-func GetTodayStartTs() (int64, error) {
+func GetCNTodayStartTs() (int64, error) {
 	t, err := time.Parse("2006-01-02", time.Now().Format("2006-01-02"))
 	if err != nil {
 		return 0, err
 	}
 	return t.Unix() - LocationTimes, nil
+}
+
+//Get the timestamp of the midnight ， pay attention to the time zone
+//查询当天零点时间戳，注意时区,减去八个小时
+func GetTodayStartTs() (int64, error) {
+	t, err := time.ParseInLocation("2006-01-02", time.Now().Format("2006-01-02"),time.Local)
+	if err != nil {
+		return 0, err
+	}
+	return t.Unix(), nil
+}
+
+func GetTomorrowStartTs() (int64, error) {
+	t, err := time.ParseInLocation("2006-01-02", time.Now().Add(24*time.Hour).Format("2006-01-02"),time.Local)
+	if err != nil {
+		return 0, err
+	}
+	return t.Unix(), nil
 }
 
 //week
